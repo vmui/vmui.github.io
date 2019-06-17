@@ -17010,6 +17010,7 @@ exports.default = {
                 var startTime = Date.now(),
                     startPos = this.pos;
                 var range = translate - startPos;
+                var first = false;
 
                 var f = function f() {
                     var d = Date.now() - startTime;
@@ -17020,8 +17021,9 @@ exports.default = {
                     }
 
                     _this.pos = startPos + range * FUNCTIONS[fn].fn(d / duration);
-                    _this.translateByC3(_this.$refs.inner, _this.pos, 1);
+                    _this.translateByC3(_this.$refs.inner, _this.pos, first ? 1 : 0, false);
                     _this.fxer = _helper.Util.rfa(f);
+                    first = true;
                 };
 
                 this.fxer = _helper.Util.rfa(f);
@@ -17066,7 +17068,7 @@ exports.default = {
 
             _helper.Dom.css(el, {
                 'transition-duration': duration + 'ms',
-                'transition-timing-function': FUNCTIONS[fn].style,
+                'transition-timing-function': fn === false ? '' : FUNCTIONS[fn].style,
                 'transform': 'translate3d(' + (this.axi == 'X' ? translate + 'px' : '0px') + ',' + (this.axi == 'Y' ? translate + 'px' : '0px') + ',' + '0px)'
             });
         },
