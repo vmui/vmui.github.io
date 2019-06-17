@@ -16768,6 +16768,11 @@ exports.default = {
     name: 'scroll',
 
     props: {
+        aa: {
+            type: Boolean,
+            default: false
+        },
+
         scrollbars: {
             type: Boolean,
             default: false
@@ -16984,7 +16989,7 @@ exports.default = {
 
             if (!self.fxer || !this.$actived) return;
 
-            IS_PHONE ? _helper.Util.crfa(self.fxer) : clearTimeout(self.fxer);
+            !this.aa && IS_PHONE ? _helper.Util.crfa(self.fxer) : clearTimeout(self.fxer);
             self.fxer = false;
             self.translateTo(self.pos = self.getComputedPos());
             self.$emit('scroll:end', self.pos);
@@ -17006,7 +17011,7 @@ exports.default = {
 
             var fn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'ease';
 
-            if (IS_PHONE && duration) {
+            if (!this.aa && IS_PHONE && duration) {
                 var startTime = Date.now(),
                     startPos = this.pos;
                 var range = translate - startPos;
@@ -17020,7 +17025,7 @@ exports.default = {
                     }
 
                     _this.pos = startPos + range * FUNCTIONS[fn].fn(d / duration);
-                    _this.translateByC3(_this.$refs.inner, _this.pos);
+                    _this.translateByC3(_this.$refs.inner, _this.pos.toFixed(2));
                     _this.fxer = _helper.Util.rfa(f);
                 };
 
@@ -34784,7 +34789,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "slot": "header"
     },
     slot: "header"
-  }, [_vm._v("lazyload")]), _vm._v(" "), _c('vm-scroll', [_c('div', {
+  }, [_vm._v("lazyload")]), _vm._v(" "), _c('vm-scroll', {
+    attrs: {
+      "aa": true
+    }
+  }, [_c('div', {
     staticStyle: {
       "font-size": "16px"
     }
