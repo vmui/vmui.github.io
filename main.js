@@ -34622,7 +34622,6 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
-//
 
 exports.default = {};
 
@@ -34631,12 +34630,9 @@ exports.default = {};
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('vm-page', [_c('vm-topbar', {
-    attrs: {
-      "slot": "header"
-    },
-    slot: "header"
-  }, [_vm._v("lazyload")]), _vm._v(" "), _c('vm-scroll', [_c('div', {
+  return _c('div', {
+    staticClass: "height: 100%;"
+  }, [_c('vm-scroll', [_c('div', {
     staticStyle: {
       "font-size": "16px"
     }
