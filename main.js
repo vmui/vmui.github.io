@@ -17072,7 +17072,7 @@ exports.default = {
             _helper.Dom.css(el, {
                 'transition-duration': duration + 'ms',
                 'transition-timing-function': fn === false ? '' : FUNCTIONS[fn].style,
-                'transform': 'translateY(' + (this.axi == 'Y' ? translate + 'px' : '0px') + ')'
+                'transform': 'translateY(' + (this.axi == 'Y' ? translate + 'px' : '0px') + ') translateZ(0px)'
             });
         },
         getComputedPos: function getComputedPos() {
