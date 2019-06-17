@@ -16733,6 +16733,37 @@ var _helper = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var IS_PHONE = /iphone/i.test(navigator.userAgent); //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+var FUNCTIONS = {
+    ease: {
+        style: 'cubic-bezier(0.1, 0.57, 0.1, 1)',
+        fn: function fn(k) {
+            return Math.sqrt(1 - --k * k);
+        }
+    },
+    bounce: {
+        style: 'cubic-bezier(0.175, 0.885, 0.32, 1.1)',
+        fn: function fn(k) {
+            var b = 4;
+            return (k = k - 1) * k * ((b + 1) * k + b) + 1;
+        }
+    }
+};
+
 exports.default = {
     name: 'scroll',
 
@@ -16747,29 +16778,16 @@ exports.default = {
             default: 'y'
         },
 
-        ease: {
-            type: String,
-            default: 'cubic-bezier(0.1, 0.57, 0.1, 1)'
-        },
-
-        bounce: {
-            type: String,
-            default: 'cubic-bezier(0.175, 0.885, 0.32, 1.1)'
-        },
-
         ignores: {
             type: [RegExp, Function, String],
             default: null
         },
 
-        maxPos: {
-            type: Number,
-            default: null
-        },
-
-        minPos: {
-            type: Number,
-            default: null
+        boundary: {
+            type: Array,
+            default: function _default() {
+                return [0, 0];
+            }
         }
     },
 
@@ -16831,12 +16849,11 @@ exports.default = {
         refresh: function refresh() {
             var self = this;
             var method = self.axis == 'x' ? 'width' : 'height';
-
             var s1 = self.eSize = _helper.Dom[method](self.$el);
             var s2 = self.iSize = _helper.Dom[method](self.$refs.inner);
 
-            self.max = self.maxPos != null ? self.maxPos : 0;
-            self.min = self.minPos != null ? self.minPos : Math.min(0, s1 - s2);
+            self.max = self.boundary[0] || 0;
+            self.min = (self.boundary[1] || 0) + Math.min(0, s1 - s2);
 
             if (self.scrollbars && s1 && s2) {
                 self.barPercent = s1 / Math.max(s1, s2);
@@ -16852,7 +16869,8 @@ exports.default = {
             self.base = pos || self.getComputedPos();
         },
         onDragStart: function onDragStart(event) {
-            var self = this;var translate = self.pos = event.data[self.axis];
+            var self = this;
+            var translate = self.pos = event.data[self.axis];
 
             self.scrollEnd();
             self.refresh();
@@ -16880,31 +16898,34 @@ exports.default = {
                 self.resetBase(time, translate);
             }
 
-            self.isMoving = true;
+            self.draging = true;
             self.dragingTime = time;
             self.$emit('draging', translate);
-            self.scrollTo(translate, 0, false, true);
+            self.scrollTo(translate);
             self.$drag.stack(translate >= self.max || translate <= self.min ? 3 : 1);
         },
         onDragEnd: function onDragEnd(event) {
             var self = this;
 
-            if (!self.isMoving) return false;
-            self.isMoving = false;
+            if (!self.draging) return false;
+            self.draging = false;
 
             var time = Date.now();
-            var duration = time - self.dragingTime;var destination;
+            var duration = time - self.dragingTime;
+            var destination;
             var translate = self.pos = event.data[self.axis];
+            var BOUND_DURCTION = 1000;
 
             if (translate >= self.max) {
-                self.scrollTo(destination = self.max, duration = 1000);
+                self.scrollTo(destination = self.max, duration = BOUND_DURCTION);
             } else if (translate > 0 && translate < self.max) {
-                self.scrollTo(destination = 0, duration = 1000);
+                self.scrollTo(destination = 0, duration = BOUND_DURCTION);
             } else if (translate <= self.min) {
-                self.scrollTo(destination = self.min, duration = 1000);
+                self.scrollTo(destination = self.min, duration = BOUND_DURCTION);
             } else if (duration < 50) {
                 var distance = translate - self.base;
-                var speed = Math.max(0.1, Math.min(1.2, Math.abs(distance) / (time - self.baseTime)));var deceleration = 0.0006;
+                var speed = Math.max(0.1, Math.min(1.2, Math.abs(distance) / (time - self.baseTime)));
+                var deceleration = 0.0006;
                 var destination = Math.round(translate + Math.pow(speed, 2) / (2 * deceleration) * (distance < 0 ? -1 : 1));
 
                 duration = 2 * speed / deceleration;
@@ -16921,7 +16942,7 @@ exports.default = {
                         break;
                     }
 
-                    self.scrollTo(destination, duration, void 0, void 0, duration < 1500 ? self.bounce : void 0);
+                    self.scrollTo(destination, duration, false, duration < 1500 ? 'bounce' : void 0);
                 } while (0);
             }
 
@@ -16932,68 +16953,31 @@ exports.default = {
         },
         scrollTo: function scrollTo(destination) {
             var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-            var limitMaxOrMin = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var notSetTransform = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-            var ease = arguments[4];
+            var limit = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var ease = arguments[3];
 
             var self = this;
 
-            if (limitMaxOrMin) {
-                if (destination >= self.max) {
-                    destination = self.max;
-                } else if (destination <= self.min) {
-                    destination = self.min;
-                }
+            if (limit) {
+                destination = destination >= self.max ? self.max : destination <= self.min ? self.min : destination;
             }
 
             if (!duration) {
                 self.pos = destination;
-                !notSetTransform && self.translateTo(self.$refs.inner, destination);
+                !self.draging && self.translateTo(destination);
                 self.$emit('scrolling', destination);
-            } else if (self.isMoving) {
+            }if (self.draging) {
                 return false;
             } else {
-                self.translateTo(self.$refs.inner, self.pos = destination, duration, ease);
-                // 解决scrolling时无法获取translate的问题
-                self.listenScrolling();
+                self.translateTo(destination, duration, ease);
             }
-
-            self.scrollBarTo(destination, duration, ease);
         },
-        scrollToElement: function scrollToElement(el, duration, limitMaxOrMin) {
+        scrollToElement: function scrollToElement(el, duration, limit) {
             var eOffset = _helper.Dom.offset(el);var offset = _helper.Dom.offset(this.$el);
             var prop = this.axi == 'X' ? 'left' : 'top';
 
             this.refresh();
-            this.scrollTo(offset[prop] - eOffset[prop], duration, limitMaxOrMin);
-        },
-        scrollBarTo: function scrollBarTo(destination) {
-            var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-            var ease = arguments[2];
-
-            var self = this;
-
-            if (self.scrollbars && self.eSize && self.iSize) {
-                self.barVisible = true;
-                clearTimeout(self.bartid);
-                self.bartid = setTimeout(function () {
-                    self.barVisible = false;
-                }, 3000);
-
-                self.translateTo(self.$refs.bar, self.eSize * (destination / self.iSize) * -1, duration, ease);
-            }
-        },
-        listenScrolling: function listenScrolling() {
-            var self = this;
-
-            function trigger() {
-                if (self.fxer) {
-                    self.$emit('scrolling', self.pos = self.getComputedPos());
-                    self.fxer = setTimeout(trigger, 50);
-                }
-            }
-
-            self.fxer = setTimeout(trigger, 50);
+            this.scrollTo(offset[prop] - eOffset[prop], duration, limit);
         },
         scrollEnd: function scrollEnd() {
             var self = this;
@@ -17001,8 +16985,9 @@ exports.default = {
             if (!self.fxer || !this.$actived) return;
 
             clearTimeout(self.fxer);
+            _helper.Util.crfa(self.fxer);
             self.fxer = false;
-            self.translateTo(self.$refs.inner, self.pos = self.getComputedPos());
+            self.translateTo(self.pos = self.getComputedPos());
             self.$emit('scroll:end', self.pos);
         },
         limitType: function limitType() {
@@ -17017,13 +17002,72 @@ exports.default = {
         getPos: function getPos() {
             return this.pos;
         },
-        translateTo: function translateTo(el, translate) {
+        translateTo: function translateTo(translate, duration) {
+            var _this = this;
+
+            var fn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'ease';
+
+            if (IS_PHONE && duration) {
+                var startTime = Date.now(),
+                    startPos = this.pos;
+                var range = translate - startPos;
+
+                var f = function f() {
+                    var d = Date.now() - startTime;
+
+                    if (d >= duration) {
+                        _this.scrollEnd();
+                        return false;
+                    }
+
+                    _this.pos = startPos + range * FUNCTIONS[fn].fn(d / duration);
+                    _this.translateByC3(_this.$refs.inner, _this.pos);
+                    _this.fxer = _helper.Util.rfa(f);
+                };
+
+                this.fxer = _helper.Util.rfa(f);
+            } else {
+                this.translateByC3(this.$refs.inner, this.pos = translate, duration, fn);
+                this.listenScrolling();
+            }
+
+            this.scrollBarTo(translate, duration, fn);
+        },
+        scrollBarTo: function scrollBarTo(destination) {
+            var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var fn = arguments[2];
+
+            var self = this;
+
+            if (self.scrollbars && self.eSize && self.iSize) {
+                self.barVisible = true;
+                clearTimeout(self.bartid);
+                self.bartid = setTimeout(function () {
+                    self.barVisible = false;
+                }, 3000);
+
+                self.translateByC3(self.$refs.bar, self.eSize * (destination / self.iSize) * -1, duration);
+            }
+        },
+        listenScrolling: function listenScrolling() {
+            var self = this;
+
+            function trigger() {
+                if (self.fxer) {
+                    self.$emit('scrolling', self.pos = self.getComputedPos());
+                    self.fxer = setTimeout(trigger, 50);
+                }
+            }
+
+            self.fxer = setTimeout(trigger, 50);
+        },
+        translateByC3: function translateByC3(el, translate) {
             var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-            var ease = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : this.ease;
+            var fn = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'ease';
 
             _helper.Dom.css(el, {
                 'transition-duration': duration + 'ms',
-                'transition-timing-function': ease,
+                'transition-timing-function': FUNCTIONS[fn].style,
                 'transform': 'translate3d(' + (this.axi == 'X' ? translate + 'px' : '0px') + ',' + (this.axi == 'Y' ? translate + 'px' : '0px') + ',' + '0px)'
             });
         },
@@ -17038,69 +17082,7 @@ exports.default = {
     deactivated: function deactivated() {
         this.$actived = false;
     }
-}; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+};
 
 /***/ }),
 /* 62 */
@@ -24718,10 +24700,9 @@ exports.default = {
     },
     mounted: function mounted() {
         var parentNode = this.$el.parentNode;
+        var display = _helper.Dom.css(parentNode, 'display');
 
         this.leftLayout = parentNode.childNodes[0] === this.$el;
-
-        var display = _helper.Dom.css(parentNode, 'display');
 
         if (display == 'block') {
             _helper.Dom.css(parentNode, 'display', 'flex');
