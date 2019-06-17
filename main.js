@@ -30993,15 +30993,19 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(383)
+}
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(310),
   /* template */
-  __webpack_require__(311),
+  __webpack_require__(385),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
-  null,
+  "data-v-1ac81cb7",
   /* moduleIdentifier (server only) */
   null
 )
@@ -31036,39 +31040,37 @@ module.exports = Component.exports
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-
-var _vm = __webpack_require__(4);
-
-exports.default = {
-    components: {
-        Page: _vm.Page,
-        Topbar: _vm.Topbar,
-        Btn: _vm.Button
-        // Actionsheet: ActionSheet.Component
-    },
-
-    data: function data() {
-        return {
-            actions: {
-                '新增': function _() {
-                    (0, _vm.Toast)('点击了新增');
-                },
-                '删除': function _() {
-                    (0, _vm.Toast)('点击了删除');
-                }
-            }
-        };
-    },
-
-
-    methods: {
-        action: function action() {
-            // ActionSheet(this.actions);
-        }
-    }
-}; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -31088,84 +31090,10 @@ exports.default = {
 //
 //
 
-/***/ }),
-/* 311 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('page', [_c('topbar', {
-    attrs: {
-      "slot": "header"
-    },
-    slot: "header"
-  }, [_vm._v("actionsheet组件")]), _vm._v(" "), _c('p', {
-    staticStyle: {
-      "text-align": "center"
-    }
-  }, [_c('btn', {
-    staticStyle: {
-      "width": "80%",
-      "margin-top": "20px"
-    },
-    on: {
-      "click": function($event) {
-        return _vm.action()
-      }
-    }
-  }, [_vm._v("点击我")])], 1), _vm._v(" "), _c('p', {
-    staticStyle: {
-      "text-align": "center"
-    }
-  }, [_c('btn', {
-    staticStyle: {
-      "width": "80%",
-      "margin-top": "20px"
-    },
-    on: {
-      "click": function($event) {
-        return _vm.$refs.def.open()
-      }
-    }
-  }, [_vm._v("自定义样式")])], 1), _vm._v(" "), _c('actionsheet', {
-    ref: "def",
-    attrs: {
-      "actions": _vm.actions,
-      "visible": false
-    },
-    scopedSlots: _vm._u([{
-      key: "item",
-      fn: function(props) {
-        return [_c('div', {
-          staticStyle: {
-            "background": "#fff",
-            "height": "0.4rem",
-            "line-height": "0.4rem",
-            "border-bottom": "1px solid #eee"
-          }
-        }, [_vm._v("\n                " + _vm._s(props.text) + "\n            ")])]
-      }
-    }])
-  }, [_vm._v(" "), _c('div', {
-    staticStyle: {
-      "background": "#fff",
-      "height": "0.4rem",
-      "line-height": "0.4rem"
-    },
-    attrs: {
-      "slot": "cancel"
-    },
-    slot: "cancel"
-  }, [_vm._v("\n            取消\n        ")])])], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1ac81cb7", module.exports)
-  }
-}
+exports.default = {};
 
 /***/ }),
+/* 311 */,
 /* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -34805,6 +34733,70 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     'page.topFixed': '20px'
 };
+
+/***/ }),
+/* 383 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(384);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("aadec75c", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1ac81cb7\",\"scoped\":true,\"hasInlineConfig\":false}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./actionsheet.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1ac81cb7\",\"scoped\":true,\"hasInlineConfig\":false}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./actionsheet.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 384 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\nimg[data-v-1ac81cb7]{\n    display: block;\n    width: 100%;\n    height: 100px;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 385 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('vm-page', [_c('vm-topbar', {
+    attrs: {
+      "slot": "header"
+    },
+    slot: "header"
+  }, [_vm._v("lazyload")]), _vm._v(" "), _c('vm-scroll', [_c('div', {
+    staticStyle: {
+      "font-size": "16px"
+    }
+  }, [_vm._v("\n            1fdsfdsfsd23332019年6月12日至16日，国家主席习近平应邀对吉尔吉斯斯坦、塔吉克斯坦进行国事访问，并出席在比什凯克举行的上海合作组织成员国元首理事会第十九次会议和在杜尚别举行的亚洲相互协作与信任措施会议第五次峰会。\n\n五天四夜里，习近平主席先后出席30多场双、多边活动，巩固了友谊互信，增进了理解共识，收获了丰硕成果。青山着意化为桥。巍峨的天山山脉和帕米尔高原见证着中国外交坚定从容，稳步前行。\n\n在世界百年未有之大变局中，中国和中亚国家面临共同的发展和安全挑战，需要构建更为紧密的合作关系，更好地维护各自和共同的利益。\n\n吉尔吉斯斯坦、塔吉克斯坦都是中国的全面战略伙伴，西出阳关皆故人。此次习近平主席分别时隔6年和5年再次到访，受到两国最高规格礼遇，彰显了元首间的亲密友谊和两国同中国关系的高水平。吉尔吉斯斯坦总统热恩别科夫、塔吉克斯坦总统拉赫蒙均前往机场迎接。热恩别科夫总统邀请习近平主席在总统官邸做客茶叙，一对一畅谈。拉赫蒙总统在6月15日的欢迎宴会上作出特殊安排，为习近平主席送上衷心祝福。两位总统还分别向习近平主席授予各自国家最高奖章，感谢习近平主席为发展吉中、塔中关系所作的卓越贡献。\n\n习近平主席高度评价双边关系，分别同热恩别科夫总统、拉赫蒙总统达成共识，一致同意增进高水平政治互信，在涉及彼此核心利益和重大关切问题上坚定相互支持；全面加强执法安全合作，携手打击“三股势力”；在国际上共同倡导多边主义和开放型世界经济，坚定维护以联合国为核心的国际体系。往访国领导人表示，他们钦佩并祝贺中华人民共和国成立70年来取得的辉煌成就，高度重视深化对华合作，将中方视为长久的朋友和真诚的伙伴，将继续把对华关系置于本国外交的优先方向。他们表示，中国的发展经验、特别是习近平主席的治国理政思想具有重大意义，值得学习借鉴。\n\n习近平主席同两位总统分别签署了进一步深化全面战略伙伴关系的联合声明，为双边关系发展规划了新的蓝图。\n\n中亚是“一带一路”首倡之地，吉尔吉斯斯坦、塔吉克斯坦都是最早支持和参与共建“一带一路”的国家，中吉、中塔的合作成果斐然。习近平主席同热恩别科夫总统、拉赫蒙总统商定，要共同落实好第二届“一带一路”国际合作高峰论坛成果，以高质量共建“一带一路”为主线，加强“一带一路”倡议同吉《2018至2040年国家发展战略》、塔《2030年前国家发展战略》的深度对接，拓展基础设施建设、能源、农业、工业、互联互通等领域合作，促进贸易投资便利化，密切人文和地方交流。中方分别同吉方和塔方达成多项经贸成果，共签署了20多份合作文件。\n\n近年来，中国与上合组织和亚信框架内绝大多数成员国、观察员国签署了共建“一带一路”合作文件，发展战略稳步对接，合作成果不断显现。这次习近平主席出席上合组织、亚信峰会期间，同各国领导人一道，就如何落实第二届“一带一路”国际合作高峰论坛重要成果、弘扬“一带一路”倡议的价值理念、加快推进地区互联互通、提升发展合作水平等深入交换意见，达成广泛共识，为高质量共建“一带一路”注入了新的动力。\n\n上海合作组织成立至今已有18年。中国于去年6月成功举办上合组织青岛峰会，引领上合组织在扩员后步入更高发展阶段。此访出席上合组织比什凯克峰会，习近平主席针对当前错综复杂的国际形势，倡议继续弘扬互信、互利、平等、协商、尊重多样文明、谋求共同发展的“上海精神”，强调要巩固团结互信基础，筑牢地区安全屏障，推动区域合作发展，丰富国际合作内涵，把上合组织打造成当今世界中团结互信、安危共担、互利共赢、包容互鉴的地区合作机制典范。\n\n习近平主席着眼形势变化和上合组织发展，提出一系列加强组织成员合作的重要建议。与会各国领导人积极回应习近平主席提出的重要主张，一致同意以“上海精神”为根本遵循，扎实推进安全、经济、人文等领域合作，维护国际关系准则，支持建设开放型世界经济，共同推动上合组织在新起点上实现更大发展。峰会发表了《上海合作组织成员国元首理事会比什凯克宣言》，签署了成员国地方合作发展纲要、数字化和信息通信技术合作构想等22份重要文件，实现了对重点领域合作的全覆盖。\n\n亚信成立27年来，已成为亚洲地区覆盖范围最广、成员数量最多、代表性最强的安全对话合作论坛。\n\n习近平主席此次出席亚信杜尚别峰会，围绕成员国追求亚洲美好明天的共同愿景发表重要讲话。针对冷战思维回潮，提出要建设互敬互信的亚洲；针对各种传统和非传统挑战，提出要建设安全稳定的亚洲；针对各国期待加强区域合作，提出要建设发展繁荣的亚洲；针对“文明冲突”论沉渣泛起，提出要建设开放包容的亚洲；针对可持续发展面临的难题，提出要建设合作创新的亚洲。“五个亚洲”凝聚了各方对亚洲未来发展走向的广泛共识，拓展了亚信进程的内涵和外延，引领了区域合作的理念和方向。与会各国领导人高度评价习近平主席讲话精神，均表示将以这次峰会为新起点，继续践行共同、综合、合作、可持续的新安全观，深化各领域信任措施合作，推动亚信为地区安全和发展作出更大贡献。\n\n出席上合组织峰会期间，中俄蒙三国元首举行了第五次会晤，就推进三国发展战略对接、各领域务实合作、中俄蒙经济走廊建设等主要议题展开讨论，释放推动区域经济融合发展的积极信号。\n\n习近平主席还在出席上合和亚信峰会期间分别会见了哈萨克斯坦总统托卡耶夫、伊朗总统鲁哈尼、印度总理莫迪、巴基斯坦总理伊姆兰·汗、阿富汗总统加尼、白俄罗斯总统卢卡申科、卡塔尔埃米尔塔米姆、土耳其总统埃尔多安等与会领导人，就双边关系和共同关心的国际与地区问题交换意见，推动中国同上述国家关系进一步发展。\n\n习近平主席接连访问俄罗斯和中亚国家，涵盖了大国外交和周边外交、双边访问和多边会议，是我国持续推进全球伙伴关系建设、推动共建“一带一路”、坚定维护世界和平稳定的重大外交举措。访问实现了预期目标，收获了丰硕成果。    \n        ")])])], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1ac81cb7", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
