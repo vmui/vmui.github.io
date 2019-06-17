@@ -16705,7 +16705,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n.vm-scroll {\n  position: relative;\n  width: 100%;\n}\n.vm-scroll .vm-scroll-content {\n  overflow: hidden;\n}\n.vm-scroll .vm-scroll-bar {\n  position: absolute;\n  border-radius: 5px;\n  background: #ccc;\n}\n.vm-scroll-y {\n  overflow: hidden;\n}\n.vm-scroll-y > .vm-scroll-bar {\n  right: 0px;\n  width: 2px;\n  height: 0px;\n  top: 0px;\n}\n.vm-scroll-y .vm-scroll-inner {\n  min-height: 100%;\n}\n.vm-scroll-x {\n  overflow-x: hidden;\n  overflow-y: auto;\n  _height: 1%;\n}\n.vm-scroll-x > .vm-scroll-bar {\n  height: 2px;\n  width: 0px;\n  left: 0px;\n  bottom: 0px;\n}\n.vm-scroll-x > .vm-scroll-inner {\n  float: left;\n  white-space: nowrap;\n}\n", ""]);
+exports.push([module.i, "\n.vm-scroll {\n  position: relative;\n  width: 100%;\n}\n.vm-scroll .vm-scroll-content {\n  overflow: hidden;\n}\n.vm-scroll .vm-scroll-bar {\n  position: absolute;\n  border-radius: 5px;\n  background: #ccc;\n}\n.vm-scroll-y {\n  overflow: hidden;\n}\n.vm-scroll-y > .vm-scroll-bar {\n  right: 0px;\n  width: 2px;\n  height: 0px;\n  top: 0px;\n}\n.vm-scroll-y .vm-scroll-inner {\n  min-height: 100%;\n  -webkit-backface-visibility: hidden;\n  -webkit-transform-style: preserve-3d;\n}\n.vm-scroll-x {\n  overflow-x: hidden;\n  overflow-y: auto;\n  _height: 1%;\n}\n.vm-scroll-x > .vm-scroll-bar {\n  height: 2px;\n  width: 0px;\n  left: 0px;\n  bottom: 0px;\n}\n.vm-scroll-x > .vm-scroll-inner {\n  float: left;\n  white-space: nowrap;\n}\n", ""]);
 
 // exports
 
