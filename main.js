@@ -16984,8 +16984,7 @@ exports.default = {
 
             if (!self.fxer || !this.$actived) return;
 
-            clearTimeout(self.fxer);
-            _helper.Util.crfa(self.fxer);
+            IS_PHONE ? _helper.Util.crfa(self.fxer) : clearTimeout(self.fxer);
             self.fxer = false;
             self.translateTo(self.pos = self.getComputedPos());
             self.$emit('scroll:end', self.pos);
