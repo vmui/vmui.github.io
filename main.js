@@ -17025,7 +17025,7 @@ exports.default = {
                     }
 
                     _this.pos = startPos + range * FUNCTIONS[fn].fn(d / duration);
-                    _this.translateByC3(_this.$refs.inner, _this.pos.toFixed(2));
+                    _this.translateByC3(_this.$refs.inner, parseInt(_this.pos));
                     _this.fxer = _helper.Util.rfa(f);
                 };
 
