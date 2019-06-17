@@ -17019,8 +17019,8 @@ exports.default = {
                         return false;
                     }
 
-                    _this.pos = startPos + range * FUNCTIONS[fn].fn(d / duration);
-                    _this.translateByC3(_this.$refs.inner, _this.pos);
+                    _this.pos = parseInt(startPos + range * FUNCTIONS[fn].fn(d / duration));
+                    _this.translateByC3(_this.$refs.inner, _this.pos, 1);
                     _this.fxer = _helper.Util.rfa(f);
                 };
 
