@@ -16991,7 +16991,7 @@ exports.default = {
 
             !this.aa && IS_PHONE ? _helper.Util.crfa(self.fxer) : clearTimeout(self.fxer);
             self.fxer = false;
-            //self.translateTo(self.pos = self.getComputedPos(), 100000000);
+            self.translateTo(self.pos = parseInt(self.getComputedPos()));
             self.$emit('scroll:end', self.pos);
         },
         limitType: function limitType() {
@@ -17035,7 +17035,7 @@ exports.default = {
                 this.listenScrolling();
 
                 setTimeout(function () {
-                    _this.translateByC3(_this.$refs.inner, _this.pos = translate + 1, 100000000, fn);
+                    _this.translateByC3(_this.$refs.inner, _this.pos = translate + 1, 1000000, fn);
                 }, 1000);
             }
 
