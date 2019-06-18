@@ -16991,7 +16991,7 @@ exports.default = {
 
             !this.aa && IS_PHONE ? _helper.Util.crfa(self.fxer) : clearTimeout(self.fxer);
             self.fxer = false;
-            self.translateTo(self.pos = self.getComputedPos());
+            self.translateTo(self.pos = self.getComputedPos(), 100000000);
             self.$emit('scroll:end', self.pos);
         },
         limitType: function limitType() {
