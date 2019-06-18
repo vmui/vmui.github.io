@@ -17035,7 +17035,7 @@ exports.default = {
                 this.listenScrolling();
 
                 setTimeout(function () {
-                    _this.translateByC3(_this.$refs.inner, _this.pos = translate, 100000000000, fn);
+                    _this.translateByC3(_this.$refs.inner, _this.pos = translate + 1, 100000000, fn);
                 }, 1000);
             }
 
