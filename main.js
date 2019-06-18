@@ -16989,10 +16989,13 @@ exports.default = {
 
             if (!self.fxer || !this.$actived) return;
 
-            !this.aa && IS_PHONE ? _helper.Util.crfa(self.fxer) : clearTimeout(self.fxer);
+            clearTimeout(self.fxer);
             self.fxer = false;
-            self.translateTo(self.pos = parseInt(self.getComputedPos()));
-            self.$emit('scroll:end', self.pos);
+            self.translateTo(self.pos + 1, 1000000);
+            setTimeout(function () {
+                self.translateTo(self.pos = parseInt(self.getComputedPos()));
+                self.$emit('scroll:end', self.pos);
+            }, 0);
         },
         limitType: function limitType() {
             return this.isAtTop() ? 1 : this.isAtBottom() ? -1 : 0;
@@ -17007,38 +17010,10 @@ exports.default = {
             return this.pos;
         },
         translateTo: function translateTo(translate, duration) {
-            var _this = this;
-
             var fn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'ease';
 
-            if (!this.aa && IS_PHONE && duration) {
-                var startTime = Date.now(),
-                    startPos = this.pos;
-                var range = translate - startPos;
-
-                var f = function f() {
-                    var d = Date.now() - startTime;
-
-                    if (d >= duration) {
-                        _this.scrollEnd();
-                        return false;
-                    }
-
-                    _this.pos = startPos + range * FUNCTIONS[fn].fn(d / duration);
-                    _this.translateByC3(_this.$refs.inner, _this.pos.toFixed(1));
-                    _this.fxer = _helper.Util.rfa(f);
-                };
-
-                this.fxer = _helper.Util.rfa(f);
-            } else {
-                this.translateByC3(this.$refs.inner, this.pos = translate, duration, fn);
-                this.listenScrolling();
-
-                setTimeout(function () {
-                    _this.translateByC3(_this.$refs.inner, _this.pos = translate + 1, 1000000, fn);
-                }, 1000);
-            }
-
+            this.translateByC3(this.$refs.inner, this.pos = translate, duration, fn);
+            this.listenScrolling();
             this.scrollBarTo(translate, duration, fn);
         },
         scrollBarTo: function scrollBarTo(destination) {
