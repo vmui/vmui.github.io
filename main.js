@@ -17036,7 +17036,7 @@ exports.default = {
 
                 setTimeout(function () {
                     _this.translateByC3(_this.$refs.inner, _this.pos = translate, 100000000000, fn);
-                }, 2000);
+                }, 1000);
             }
 
             this.scrollBarTo(translate, duration, fn);
