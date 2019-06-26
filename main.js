@@ -16965,11 +16965,13 @@ exports.default = {
             this.stick = pos >= this.maxPos || pos <= this.minPos ? 3 : 1;
             this.triggerScrolling(pos);
             this.scrollBarTo(pos);
+            this.$emit('draging', pos);
         },
         onDragEnd: function onDragEnd(event) {
             if (!this.draging) return false;
 
             this.draging = false;
+            this.$emit('drag:end', this.pos);
 
             var now = Date.now(),
                 target = this.pos,
@@ -17992,6 +17994,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
 
 exports.default = {
     name: 'pulldown2refresh',
@@ -18006,6 +18009,7 @@ exports.default = {
     data: function data() {
         return {
             isRefreshing: false,
+            isRecovering: false,
             isMax: false,
             maxPos: 0
         };
@@ -18035,12 +18039,14 @@ exports.default = {
 
     methods: {
         onScrolling: function onScrolling(translate) {
+            if (translate == 0) {
+                this.isRecovering = false;
+            }
+
             this.isMax = this.limitType() == 1;
             this.$emit('scrolling', translate);
         },
         onScrollEnd: function onScrollEnd() {
-            this.limitType() == 1 && this.refresh();
-
             for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                 args[_key] = arguments[_key];
             }
@@ -18053,6 +18059,7 @@ exports.default = {
             }
 
             this.$emit.apply(this, ['translate'].concat(_toConsumableArray(args)));
+            this.limitType() == 1 && this.refresh();
         },
         refresh: function refresh() {
             var animation = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -18065,8 +18072,17 @@ exports.default = {
             trigger && this.$emit('refresh', this.recover);
         },
         recover: function recover() {
-            this.isRefreshing && this.scrollTo(0, 1000);
-            this.isRefreshing = false;
+            var _this2 = this;
+
+            if (this.isRefreshing) {
+                this.isRefreshing = false;
+                this.isRecovering = true;
+
+                setTimeout(function () {
+                    _this2.scrollTo(0, 1000);
+                }, 300);
+            }
+
             this.$emit('recover');
         },
         limitType: function limitType() {
@@ -18261,7 +18277,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "slot": "header"
     },
     slot: "header"
-  }, [_vm._t("pull-status", [(!_vm.isRefreshing && !_vm.isMax) ? _vm._t("if-pulldown", [_vm._v("下拉刷新数据")]) : _vm._e(), _vm._v(" "), (!_vm.isRefreshing && _vm.isMax) ? _vm._t("if-pullleave", [_vm._v("松手刷新数据")]) : _vm._e(), _vm._v(" "), (_vm.isRefreshing) ? _vm._t("if-refreshing", [_c('loading'), _vm._v("正在刷新数据")]) : _vm._e()])], 2), _vm._v(" "), _vm._t("default")], 2)
+  }, [_vm._t("pull-status", [(!_vm.isRefreshing && !_vm.isMax && !_vm.isRecovering) ? _vm._t("if-pulldown", [_vm._v("下拉刷新数据")]) : _vm._e(), _vm._v(" "), (!_vm.isRefreshing && _vm.isMax && !_vm.isRecovering) ? _vm._t("if-pullleave", [_vm._v("松手刷新数据")]) : _vm._e(), _vm._v(" "), (_vm.isRefreshing) ? _vm._t("if-refreshing", [_c('loading'), _vm._v("正在刷新数据")]) : _vm._e(), _vm._v(" "), (_vm.isRecovering && !_vm.isRefreshing) ? _vm._t("if-recovering", [_vm._v("刷新完成")]) : _vm._e()])], 2), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -30295,7 +30311,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n.col a[data-v-19bd7b6f]{\n    display: block;\n    font-size: 14px;\n    padding: 10px;\n}\n.row a[data-v-19bd7b6f]{\n    font-size: 14px;\n    padding: 10px;\n    display: inline-block;\n}\n", ""]);
+exports.push([module.i, "\n.col a[data-v-19bd7b6f] {\n    display: block;\n    font-size: 14px;\n    padding: 10px;\n}\n.row a[data-v-19bd7b6f] {\n    font-size: 14px;\n    padding: 10px;\n    display: inline-block;\n}\n.g[data-v-19bd7b6f] {\n    display: inline-block;\n    width: 10px;\n    height: 5px;\n    background: red;\n    line-height: 0;\n    font-size: 0;\n    vertical-align: middle;\n    -webkit-transform: rotate(45deg);\n}\n.g[data-v-19bd7b6f]:after {\n    content:'/';\n    display:block;\n    width: 20px;\n    height:5px;\n    background: red;\n    -webkit-transform: rotate(-90deg) translateY(-50%) translateX(50%);\n}\n", ""]);
 
 // exports
 
@@ -30348,7 +30364,7 @@ exports.default = {
             if (pos <= -this.$refs.header.clientHeight - 50) {
                 if (this.innerDisabled) {
                     this.innerDisabled = false;
-                    this.$refs.outerScroller.scrollTo(-this.$refs.header.clientHeight);
+                    this.$refs.outerScroller.scrollTo(-this.$refs.header.clientHeight - 50);
                 }
             } else {
                 this.innerDisabled = true;
@@ -30368,6 +30384,28 @@ exports.default = {
         }
     }
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -30457,7 +30495,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, _vm._l((100), function(i, a) {
     return _c('a', [_vm._v(_vm._s(i))])
-  }), 0)], 1), _vm._v(" "), _c('pulldown2refresh', {
+  }), 0)], 1), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "font-size": "30px",
+      "color": "red"
+    }
+  }, [_vm._v("✔")]), _vm._v(" "), _c('pulldown2refresh', {
     ref: "scroll",
     staticClass: "col",
     staticStyle: {
