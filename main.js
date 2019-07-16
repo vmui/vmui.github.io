@@ -34920,7 +34920,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\nimg[data-v-131d3dce]{\n    display: block;\n    width: 100%;\n    height: 100px;\n}\n", ""]);
+exports.push([module.i, "\nimg[data-v-131d3dce]{\n    display: block;\n    width: 100%;\n    height: 100px;\n}\nitem[data-v-131d3dce] {\n    width: 100%;\n    height: 100px;\n}\nitem img[data-v-131d3dce] {\n    height: 100%;\n    width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -34942,26 +34942,37 @@ exports.default = {
     directives: {
         monitor: {
             bind: function bind(element, data) {
-                var start = performance.timing.responseStart;
-                var images = element.querySelectorAll('img');
-                var promises = [].map.call(images, function (image, index) {
-                    return new Promise(function (resolve) {
-                        image.addEventListener('load', resolve);
-                        image.addEventListener('complete', resolve);
-                        image.addEventListener('error', resolve);
+                setTimeout(function () {
+                    var maxWidth = window.innerWidth,
+                        maxHeight = window.innerHeight;
+                    var start = performance.timing.responseStart;
+                    var images = element.querySelectorAll('img');
+                    var promises = [].map.call(images, function (image, index) {
+                        console.log(image.width, image.height);
+                        return new Promise(function (resolve) {
+                            image.addEventListener('load', resolve);
+                            image.addEventListener('complete', resolve);
+                            image.addEventListener('error', resolve);
+                        });
                     });
-                });
 
-                Promise.all(promises).then(function () {
-                    console.log('duration, ', Date.now() - start);
-                });
+                    console.log(maxWidth, maxHeight);
 
-                // Helper.Util.observer(element, {
-                //     childList: true,
-                //     subtree: true
-                // }, (...args) => {
-                //     console.log(args);
-                // });
+                    Promise.all(promises).then(function () {
+                        console.log('duration, ', Date.now() - start);
+                    });
+
+                    _vm.Helper.Util.observer(element, {
+                        childList: true,
+                        subtree: true
+                    }, function () {
+                        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                            args[_key] = arguments[_key];
+                        }
+
+                        console.log(args);
+                    });
+                }, 0);
             }
         }
     },
@@ -34972,11 +34983,25 @@ exports.default = {
         };
     },
     mounted: function mounted() {
-        // this.$nextTick(() => {
-        //     this.number = 100;
-        // });
+        var _this = this;
+
+        this.$nextTick(function () {
+            _this.number = 100;
+        });
     }
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -35017,11 +35042,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     ref: "container"
   }, _vm._l((_vm.number), function(item) {
-    return _c('img', {
+    return _c('div', {
+      staticClass: "item"
+    }, [_c('img', {
       attrs: {
         "data-src": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1849159362,540367789&fm=27&gp=0.jpg"
       }
-    })
+    })])
   }), 0)])], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
