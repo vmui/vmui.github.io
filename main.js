@@ -18046,6 +18046,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
 
 exports.default = {
     name: 'pulldown2refresh',
@@ -18114,11 +18115,18 @@ exports.default = {
 
             this.$emit.apply(this, ['drag:start'].concat(_toConsumableArray(args)));
         },
+        onDraging: function onDraging() {
+            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+                args[_key4] = arguments[_key4];
+            }
+
+            this.$emit.apply(this, ['draging'].concat(_toConsumableArray(args)));
+        },
         onDragEnd: function onDragEnd() {
             this.limitType() == 1 && this.refresh();
 
-            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-                args[_key4] = arguments[_key4];
+            for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+                args[_key5] = arguments[_key5];
             }
 
             this.$emit.apply(this, ['drag:end'].concat(_toConsumableArray(args)));
@@ -18137,9 +18145,8 @@ exports.default = {
             if (this.isRefreshing) {
                 this.isRefreshing = false;
                 this.scrollTo(0, 1000);
+                this.$emit('recover');
             }
-
-            this.$emit('recover');
         },
         limitType: function limitType() {
             return this.$scroll.limitType();
@@ -18428,6 +18435,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     on: {
       "drag:start": _vm.onDragStart,
+      "draging": _vm.onDraging,
       "drag:end": _vm.onDragEnd,
       "scrolling": _vm.onScrolling,
       "scroll:end": _vm.onScrollEnd,
@@ -18613,6 +18621,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
 
 exports.default = {
     name: 'list',
@@ -18674,7 +18684,7 @@ exports.default = {
             isLoading: false,
             isCompleted: false,
             page: 0,
-            error: 0,
+            error: null,
             $scroll: null,
             _source: '',
             unitHeights: []
@@ -18724,9 +18734,10 @@ exports.default = {
     },
 
     methods: {
+        try2load: function try2load() {
+            this.pullup2load && this.page > 0 && this.$scroll.limitType() == -1 && this.load();
+        },
         onScrolling: function onScrolling() {
-            this.pullup2load && this.$scroll.limitType() == -1 && this.load();
-
             for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                 args[_key] = arguments[_key];
             }
@@ -18735,9 +18746,9 @@ exports.default = {
         },
         setParams: function setParams(params, append) {
             if (append) {
-                this._params = Object({}, this._params, params);
+                this._params = Object.assign({}, this._params, params);
             } else {
-                this._params = Object({}, params);
+                this._params = Object.assign({}, params);
             }
         },
         setData: function setData() {
@@ -18801,34 +18812,40 @@ exports.default = {
 
             _helper.Util.acm(ajax, this).then(function (data) {
                 _this3.page == 0 ? _this3.setData(data) : _this3.addData(data);
-                _this3.renderRows();
                 _this3.$emit('fetch:success', data);
-                _this3.$xhr = null;
+                _this3.fetchComplete();
             }, function (data) {
-                _this3.error = data;
+                _this3.error = true;
                 _this3.$emit('fetch:fail', data);
-                _this3.$xhr = null;
+                _this3.fetchComplete();
             });
         },
-        renderRows: function renderRows() {
+        fetchComplete: function fetchComplete() {
             var page = ++this.page;
-            var rows = this.data.slice(this.maxCountPerPage * (page - 1), this.maxCountPerPage * page);
 
-            if (!this.pullup2load || rows.length < this.maxCountPerPage) {
-                this.isCompleted = true;
-                this.$emit('nomore');
-            }
+            if (!this.error) {
+                var rows = this.data.slice(this.maxCountPerPage * (page - 1), this.maxCountPerPage * page);
 
-            if (page == 1) {
-                this.rows = rows;
-                this.$emit('refresh:success', rows);
+                if (!this.pullup2load || rows.length < this.maxCountPerPage) {
+                    this.isCompleted = true;
+                    this.$emit('nomore');
+                }
+
+                if (page == 1) {
+                    this.rows = rows;
+                    this.$emit('refresh:success', rows);
+                    this.pulldown2refresh && this.$scroll.recover();
+                } else {
+                    this.rows = this.rows.concat(rows);
+                }
+            } else if (page == 1) {
+                this.page = 0;
+                this.$emit('refresh:error', this.rows = []);
                 this.pulldown2refresh && this.$scroll.recover();
-            } else {
-                this.rows = this.rows.concat(rows);
             }
 
+            this.$emit('rows:render', this.rows);
             this.isLoading = false;
-            this.$emit('rows:render', rows);
         }
     }
 };
@@ -18847,7 +18864,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     on: {
       "refresh": _vm.refresh,
-      "scrolling": _vm.onScrolling
+      "scrolling": _vm.onScrolling,
+      "draging": _vm.try2load,
+      "scroll:end": _vm.try2load
     }
   }, [(_vm.$slots.header) ? _c('div', {
     staticClass: "vm-list-header"
@@ -18868,11 +18887,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     "data": _vm.rows
   })], 2), _vm._v(" "), _c('div', {
     staticClass: "vm-list-status"
-  }, [(_vm.ifLoading) ? _vm._t("if-loading", [_c('loading'), _vm._v(" 正在加载中\n        ")]) : _vm._e(), _vm._v(" "), (_vm.isCompleted) ? _vm._t("if-nomore", [_vm._v("就这么多啦~")]) : _vm._e(), _vm._v(" "), (_vm.ifFailed) ? _vm._t("if-empty", [_c('span', {
+  }, [(_vm.ifLoading) ? _vm._t("if-loading", [_c('loading'), _vm._v(" 正在加载中\n        ")]) : (_vm.ifFailed) ? _vm._t("if-failed", [_c('span', {
     staticClass: "vm-list-status-box"
-  }, [_vm._v("神马都木有~")])]) : _vm._e(), _vm._v(" "), (_vm.ifFailed) ? _vm._t("if-failed", [_c('span', {
+  }, [_vm._v("网络异常，加载失败")])]) : (_vm.ifEmpty) ? _vm._t("if-empty", [_c('span', {
     staticClass: "vm-list-status-box"
-  }, [_vm._v("网络异常，加载失败")])]) : _vm._e()], 2), _vm._v(" "), _c('div', {
+  }, [_vm._v("神马都木有~")])]) : (_vm.isCompleted) ? _vm._t("if-nomore", [_vm._v("就这么多啦~")]) : _vm._e()], 2), _vm._v(" "), _c('div', {
     staticClass: "vm-list-footer"
   }, [_vm._t("footer")], 2)])
 },staticRenderFns: []}
@@ -22096,7 +22115,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n.vm-searchbar {\n  padding: 5px 16px;\n  height: 36px;\n  justify-content: center;\n  display: flex;\n  align-items: center;\n}\n.vm-searchbar ::-webkit-search-cancel-button {\n  -webkit-appearance: none;\n}\n.vm-searchbar .vm-iconfont {\n  opacity: 0.8;\n}\n.vm-searchbar-helper {\n  height: 100%;\n  border: 1px solid #eee;\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  border-radius: 100px;\n}\n.vm-searchbar-inner {\n  flex: 1;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  padding-left: 10px;\n}\n.vm-searchbar-inner input {\n  height: 100%;\n  flex: 1;\n  display: block;\n  color: inherit;\n  font-size: 14px;\n  box-sizing: border-box;\n  border: 0px;\n  outline: none;\n  background: transparent;\n}\n.vm-searchbar-inner input:focus {\n  border: 0px;\n}\n.vm-searchbar-inner ::-webkit-input-placeholder {\n  color: inherit;\n  opacity: 0.5;\n}\n.vm-searchbar-icon {\n  display: inline-block;\n  margin-left: 6px;\n  margin-right: 6px;\n}\n.vm-searchbar-clear {\n  text-decoration: none;\n  width: 46px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  color: inherit;\n  font-weight: bold;\n}\n.vm-searchbar-clear-hide {\n  visibility: hidden;\n}\n", ""]);
+exports.push([module.i, "\n.vm-searchbar {\n  padding: 5px 16px;\n  height: 36px;\n  display: flex;\n  align-items: center;\n  margin: 0px;\n}\n.vm-searchbar ::-webkit-search-cancel-button {\n  -webkit-appearance: none;\n}\n.vm-searchbar-helper {\n  height: 100%;\n  border: 1px solid #eee;\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  border-radius: 100px;\n}\n.vm-searchbar-inner {\n  flex: 1;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  padding-left: 10px;\n}\n.vm-searchbar-inner input {\n  height: 100%;\n  flex: 1;\n  display: block;\n  color: inherit;\n  font-size: 14px;\n  box-sizing: border-box;\n  border: 0px;\n  outline: none;\n  background: transparent;\n}\n.vm-searchbar-inner input:focus {\n  border: 0px;\n}\n.vm-searchbar-inner ::-webkit-input-placeholder {\n  color: inherit;\n  opacity: 0.5;\n}\n.vm-searchbar-icon {\n  display: inline-block;\n  margin-left: 6px;\n  margin-right: 6px;\n  font-weight: bold;\n  opacity: 0.8;\n}\n.vm-searchbar-clear {\n  text-decoration: none;\n  width: 46px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  color: inherit;\n  font-weight: bold;\n  opacity: 0.8;\n}\n.vm-searchbar-clear-hide {\n  visibility: hidden;\n}\n", ""]);
 
 // exports
 
@@ -22164,7 +22183,7 @@ exports.default = {
 
         placeholder: {
             type: String,
-            default: '请输入关键字进行搜索'
+            default: '请输入关键字'
         },
 
         readonly: {
@@ -22212,26 +22231,28 @@ exports.default = {
         focus: function focus() {
             this.$refs.input.focus();
         },
+        onFocus: function onFocus() {
+            this.$emit('focus');
+        },
+        onClick: function onClick() {
+            this.$emit('click');
+        },
+        onInput: function onInput() {
+            this.val = this.$refs.input.value.trim();
+        },
         blur: function blur() {
             this.$refs.input.blur();
-        },
-        input: function input() {
-            this.val = this.$refs.input.value;
         },
         clear: function clear() {
             this.val = '';
             this.$emit('clear');
         },
-        submit: function submit() {
+        onSubmit: function onSubmit() {
             this.$emit('submit');
             this.$refs.input.blur();
         }
     }
 };
-
-// Util.defineConfig(Searchbar, {
-//     inputBgColor: 'rgba(204, 204, 204, 0.2)'
-// });
 
 /***/ }),
 /* 164 */
@@ -22246,7 +22267,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "submit": function($event) {
         $event.preventDefault();
-        return _vm.submit()
+        return _vm.onSubmit()
       }
     }
   }, [_c('div', {
@@ -22254,7 +22275,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     style: (_vm.innerStyle)
   }, [_c('div', {
     staticClass: "vm-searchbar-inner"
-  }, [_vm._t("left"), _vm._v(" "), _vm._t("icon", [_c('icon', {
+  }, [_vm._t("inner-left"), _vm._v(" "), _vm._t("icon", [_c('icon', {
     staticClass: "vm-searchbar-icon",
     attrs: {
       "type": "search"
@@ -22271,16 +22292,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": _vm.val
     },
     on: {
-      "input": function($event) {
-        if (!$event.type.indexOf('key') && _vm._k($event.keyCode, "trim", undefined, $event.key, undefined)) { return null; }
-        return _vm.input($event)
-      },
-      "focus": function($event) {
-        return _vm.$emit('focus')
-      },
-      "click": function($event) {
-        return _vm.$emit('click')
-      }
+      "input": _vm.onInput,
+      "focus": _vm.onFocus,
+      "click": _vm.onClick
     }
   }), _vm._v(" "), _c('a', {
     class: ['vm-searchbar-clear', !_vm.val ? 'vm-searchbar-clear-hide' : ''],
@@ -30554,7 +30568,9 @@ exports.default = {
                     dataType: 'json',
                     success: function success(data) {
                         resolve(data.list);
-                    }
+                    },
+
+                    error: reject
                 });
             });
         },
@@ -31075,6 +31091,56 @@ Object.defineProperty(exports, "__esModule", {
 
 var _vm = __webpack_require__(4);
 
+var _ajax = __webpack_require__(25);
+
+var _ajax2 = _interopRequireDefault(_ajax);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 exports.default = {
     components: {
         Page: _vm.Page,
@@ -31091,51 +31157,33 @@ exports.default = {
     },
 
 
+    watch: {
+        wd: function wd(v) {
+            console.log(v);
+        }
+    },
+
     methods: {
+        api: function api(params) {
+            return new Promise(function (resolve, reject) {
+                (0, _ajax2.default)({
+                    url: 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?json=1&cb=?',
+                    data: params,
+                    dataType: 'json',
+                    success: function success(data) {
+                        resolve(data.g);
+                    },
+                    error: function error() {
+                        reject();
+                    }
+                });
+            });
+        },
         formatter: function formatter(data) {
             return data.g || [];
         }
     }
-}; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+};
 
 /***/ }),
 /* 332 */
@@ -31149,12 +31197,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     slot: "header"
   }, [_vm._v("searchbar + list组件")]), _vm._v(" "), _c('searchbar', {
     staticStyle: {
-      "background": "#000"
+      "background": "blue"
     },
     attrs: {
       "inner-style": {
-        borderRadius: '0px',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        borderRadius: '0px'
       },
       "placeholder": "请输入关键词，百度搜索"
     },
@@ -31165,9 +31213,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       expression: "wd"
     }
-  }), _vm._v(" "), _c('list', {
+  }, [_c('select', {
+    staticStyle: {
+      "width": "100px"
+    },
     attrs: {
-      "source": "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?json=1&cb=?",
+      "slot": "inner-left"
+    },
+    slot: "inner-left"
+  }, [_c('option', [_vm._v("1")])])]), _vm._v(" "), _c('list', {
+    attrs: {
+      "api": _vm.api,
       "params": {
         'wd': _vm.wd
       },
