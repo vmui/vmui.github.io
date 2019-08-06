@@ -32047,6 +32047,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -32083,6 +32091,7 @@ var style = {
 
     data: function data() {
         return {
+            checker: false,
             aaa: '',
             postData: {
                 a: '33',
@@ -32149,6 +32158,9 @@ var style = {
 
 
     watch: {
+        checker: function checker(v) {
+            console.log(v);
+        },
         postData: function postData(v) {
             console.log(v);
         },
@@ -32205,14 +32217,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "slot": "header"
     },
     slot: "header"
-  }, [_vm._v("form系列组件")]), _vm._v(" "), _c('scroll', [_c('vm-form-row', {
-    directives: [{
-      name: "validation",
-      rawName: "v-validation",
-      value: (_vm.lala),
-      expression: "lala"
-    }]
-  }, [_c('template', {
+  }, [_vm._v("form系列组件")]), _vm._v(" "), _c('scroll', [_c('vm-form-row', [_c('template', {
     slot: "extras"
   }, [_vm._v("fdjskfdks")]), _vm._v(" "), _c('div', {
     attrs: {
@@ -32234,7 +32239,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "slot": "right"
     },
     slot: "right"
-  }, [_vm._v("456")])])], 2), _vm._v(" "), _c('vm-form-input'), _vm._v(" "), _c('vm-checker'), _vm._v(" "), _c('text-input', {
+  }, [_vm._v("456")])])], 2), _vm._v(" "), _c('vm-form-row', [_c('template', {
+    slot: "label"
+  }, [_vm._v("lalala")]), _vm._v(" "), _c('vm-checker', {
+    attrs: {
+      "disabled": "",
+      "label": "fdjkfdjsk"
+    }
+  })], 2), _vm._v(" "), _c('vm-form-row', {
+    attrs: {
+      "label": "haha"
+    }
+  }, [_c('vm-checker', {
+    attrs: {
+      "square": "",
+      "label": "fdfs"
+    }
+  }), _vm._v("   \n                "), _c('vm-checker', {
+    attrs: {
+      "square": "",
+      "label": "fdfs"
+    }
+  })], 1), _vm._v(" "), _c('text-input', {
     attrs: {
       "label": "单行文本",
       "placeholder": "单行"
@@ -34662,7 +34688,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n.vm-checker {\n    border-width: 2px;\n    border-style: solid;\n    box-sizing: border-box;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    border-radius: 100px;\n}\n.vm-checker-tick {\n    transform: scale(0.7);\n}\n", ""]);
+exports.push([module.i, "\n.vm-checker {\n    display: flex;\n    align-items: center;\n}\n.vm-checker-icon {\n    border-width: 1px;\n    border-style: solid;\n    box-sizing: border-box;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    margin-right: 3px;\n}\n.vm-checker-tick {\n    transform: scale(0.6);\n    font-weight: bold;\n}\n\n", ""]);
 
 // exports
 
@@ -34676,8 +34702,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__icon__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__icon___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__icon__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tick__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helper__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helper__ = __webpack_require__(1);
 //
 //
 //
@@ -34693,7 +34718,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
+//
+//
 
 
 
@@ -34701,28 +34727,80 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'checker',
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
 
     components: {
-        Icon: __WEBPACK_IMPORTED_MODULE_1__icon___default.a,
-        Tick: __WEBPACK_IMPORTED_MODULE_2__tick__["a" /* default */]
+        Icon: __WEBPACK_IMPORTED_MODULE_1__icon___default.a
     },
 
     props: {
-        size: {
+        label: {
+            type: String,
+            default: ''
+        },
+
+        iconSize: {
             type: [String, Number],
-            default: 20
+            default: 16
         },
 
         color: {
             type: String,
             default: Object(__WEBPACK_IMPORTED_MODULE_0__config__["a" /* default */])('theme')
+        },
+
+        checked: {
+            type: Boolean,
+            default: false
+        },
+
+        square: {
+            type: Boolean,
+            default: false
+        },
+
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
 
     data: function data() {
         return {
-            l: __WEBPACK_IMPORTED_MODULE_3__helper__["c" /* Util */].n2p(this.size)
+            selected: this.checked
         };
+    },
+
+
+    watch: {
+        checked: function checked(_checked) {
+            this.selected = _checked;
+        }
+    },
+
+    computed: {
+        checkerStyle: function checkerStyle() {
+            var size = __WEBPACK_IMPORTED_MODULE_2__helper__["c" /* Util */].n2p(this.iconSize);
+
+            return {
+                borderRadius: this.square ? '0px' : '100px',
+                width: size,
+                height: size,
+                borderColor: this.disabled ? '#ccc' : this.selected ? this.color : '#999',
+                background: this.disabled ? '#ccc' : this.selected ? this.color : '#fff'
+            };
+        }
+    },
+
+    methods: {
+        onClick: function onClick() {
+            if (this.disabled) return false;
+
+            this.$emit('change', this.selected = !this.selected);
+        }
     }
 });
 
@@ -34731,20 +34809,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('i', {
+  return _c('div', {
     staticClass: "vm-checker",
-    style: ({
-      borderColor: this.color,
-      width: _vm.l,
-      height: _vm.l
-    })
-  }, [_c('tick', {
+    on: {
+      "click": _vm.onClick
+    }
+  }, [_c('i', {
+    staticClass: "vm-checker-icon",
+    style: (_vm.checkerStyle)
+  }, [_c('icon', {
     staticClass: "vm-checker-tick",
     attrs: {
+      "type": "selected",
       "size": _vm.size,
-      "color": _vm.color
+      "color": "#fff"
     }
-  })], 1)])
+  })], 1), _vm._v(" "), _c('div', {
+    staticClass: "vm-checker-label"
+  }, [_vm._t("default", [_vm._v("\n            " + _vm._s(_vm.label) + "\n        ")])], 2)])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
